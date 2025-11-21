@@ -23,6 +23,17 @@
     --accent: rgb(178, 80, 178);
 }
 
+#searchEngine {
+    margin-top: 15px;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background-color: #1a1a1a;
+    color: #eee;
+    box-shadow: 0 0 10px rgba(178, 80, 178, 0.25);
+}
+
 /* Logo */
 #logo {
     font-size: 52px;
@@ -99,35 +110,74 @@ body::before {
     <button id="loadButton">Load</button>
 </div>
 
-   <script>
-      const loadButton = document.getElementById('loadButton');
+<select name="SearchEngine" id="searchEngine">
+    <option value="google">Google</option>
+    <option value="bing">Bing</option>
+    <option value="duckduckgo">DuckDuckGo</option>
+    <option value="yahoo">Yahoo</option>
+    <option value="baidu">Baidu</option>
+    <option value="yandex">Yandex</option>
+    <option value="youtube">YouTube</option>
+
+</select>
+
+  <script>
+const loadButton = document.getElementById('loadButton');
 const urlInput = document.getElementById('urlInput');
+const searchEngine = document.getElementById('searchEngine');
 
 function handleGo() {
     let value = urlInput.value.trim();
-
     if (value === "") return;
 
-    // If it starts with http, just open it
+    // Determine search prefix
+    let searchPrefix;
+    switch (searchEngine.value) {
+        case "google":
+            searchPrefix = "https://www.google.com/search?q=";
+            break;
+        case "bing":
+            searchPrefix = "https://www.bing.com/search?q=";
+            break;
+        case "duckduckgo":
+            searchPrefix = "https://duckduckgo.com/?q=";
+            break;
+        case "yahoo":
+            searchPrefix = "https://search.yahoo.com/search?p=";
+            break;
+        case "baidu":   
+            searchPrefix = "https://www.baidu.com/s?wd=";
+            break;
+        case "yandex":
+            searchPrefix = "https://yandex.com/search/?text=";
+            break;
+        case "youtube":
+            searchPrefix = "https://www.youtube.com/results?search_query=";
+            break;
+        default:
+            searchPrefix = "https://www.google.com/search?q=";
+    }
+
+    // If it's a full URL
     if (value.startsWith("http://") || value.startsWith("https://")) {
-        window.open(value);
+        window.location.href = value;
         return;
     }
 
-    // If it ends with a known domain, open it as a site
+    // If it ends with a known domain
     const endings = [
         ".com",".org",".net",".io",".gov",".edu",".co",".us",".uk",
         ".ca",".de",".fr",".au",".jp",".in",".ng"
     ];
-
     if (endings.some(end => value.endsWith(end))) {
-        window.open("http://" + value);
+        window.location.href = "http://" + value;
         return;
     }
 
-    // Otherwise search it
-    window.open("https://www.google.com/search?q=" + encodeURIComponent(value));
+    // Otherwise search using the selected engine
+    window.location.href = searchPrefix + encodeURIComponent(value);
 }
+
 
 loadButton.addEventListener("click", handleGo);
 
@@ -136,7 +186,7 @@ urlInput.addEventListener("keydown", (e) => {
         handleGo();
     }
 });
+</script>
 
-   </script>
 </body>
 </html>
