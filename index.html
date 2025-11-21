@@ -100,14 +100,43 @@ body::before {
 </div>
 
    <script>
-       const loadButton = document.getElementById('loadButton');
-       const urlInput = document.getElementById('urlInput');
-       onkeydown = function(e) {
-           if(e.key == "Enter") {
-               const url = "https://www.google.com/search?q=" + encodeURIComponent(urlInput.value);
-               window.open(url);
-           }
-       };
+      const loadButton = document.getElementById('loadButton');
+const urlInput = document.getElementById('urlInput');
+
+function handleGo() {
+    let value = urlInput.value.trim();
+
+    if (value === "") return;
+
+    // If it starts with http, just open it
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+        window.open(value);
+        return;
+    }
+
+    // If it ends with a known domain, open it as a site
+    const endings = [
+        ".com",".org",".net",".io",".gov",".edu",".co",".us",".uk",
+        ".ca",".de",".fr",".au",".jp",".in",".ng"
+    ];
+
+    if (endings.some(end => value.endsWith(end))) {
+        window.open("http://" + value);
+        return;
+    }
+
+    // Otherwise search it
+    window.open("https://www.google.com/search?q=" + encodeURIComponent(value));
+}
+
+loadButton.addEventListener("click", handleGo);
+
+urlInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        handleGo();
+    }
+});
+
    </script>
 </body>
 </html>
